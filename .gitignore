@@ -141,3 +141,7 @@ cython_debug/
 # IDE settings
 .vscode
 .idea
+
+# Local RealSense calibration inputs and generated workspaces
+/aruco_inputs/
+/aruco_results/

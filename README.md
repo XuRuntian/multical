@@ -3,6 +3,9 @@
 
 Multi-camera calibration using one or more calibration patterns. 
 
+For fixed-intrinsic RealSense extrinsic calibration using a single ArUco marker
+and merged `realsense-sync-lab` captures, see [REALSENSE_ARUCO.md](REALSENSE_ARUCO.md).
+
 ![image](https://raw.githubusercontent.com/saulzar/multical/master/screenshots/image_view.png)
 ![image](https://raw.githubusercontent.com/saulzar/multical/master/screenshots/3d_view.png)
 

@@ -15,7 +15,12 @@ def import_camera(camera_data):
     intrinsic = camera_data.K
     (w, h) = camera_data.image_size
 
-    return Camera(
+    camera_type = Camera
+    if camera_data.get('model') == 'realsense_inverse_brown_conrady':
+      from multical.camera_realsense import RealSenseInverseCamera
+      camera_type = RealSenseInverseCamera
+
+    return camera_type(
         image_size = (w, h),
         intrinsic = np.array(intrinsic),
         dist = np.array(camera_data.dist),

@@ -1,0 +1,6 @@
+boards:
+  aruco_100mm:
+    _type_: aruco
+    aruco_dict: 6X6_50
+    marker_id: 0
+    marker_length: 0.1

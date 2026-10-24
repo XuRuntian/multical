@@ -2,6 +2,7 @@ from dataclasses import dataclass
 from os import path
 from .charuco import CharucoBoard
 from .aprilgrid import AprilGrid
+from .aruco import ArucoBoard
 from .calico_config import load_calico
 
 
@@ -42,6 +43,14 @@ class AprilConfig:
 
 
 @dataclass 
+class ArucoConfig:
+  _type_: str = 'aruco'
+  marker_length: float = MISSING
+  marker_id: int = 0
+  aruco_dict: str = '6X6_50'
+
+
+@dataclass
 class CheckerboardConfig:
   _type_: str = "checkerboard"
   size : Tuple[int, int] = MISSING
@@ -69,8 +78,11 @@ def load_config(yaml_file):
     elif config._type_ == "aprilgrid":
       schema = OmegaConf.structured(AprilConfig)
       return AprilGrid(**merge_schema(config, schema))
+    elif config._type_ == 'aruco':
+      schema = OmegaConf.structured(ArucoConfig)
+      return ArucoBoard(aruco_params=aruco_params, **merge_schema(config, schema))
     else:
-      assert False, f"unknown board type: {config._type_}, options are (charuco | aprilgrid | checkerboard)"
+      assert False, f"unknown board type: {config._type_}, options are (charuco | aprilgrid | aruco)"
 
   return {k:instantiate_board(board) for k, board in boards.items()}
 
