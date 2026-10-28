@@ -38,6 +38,20 @@ locations. Ensure the tag is large/sharp enough in the image. A single planar
 marker has pose ambiguity, especially when small or nearly frontal; inspect the
 result against the actual rig, not only its reprojection error.
 
+Alternatively, newer sync-lab checkouts can keep all cameras streaming and
+capture many numbered stationary poses in one interactive session:
+
+```bash
+cd /home/user/realsense-sync-lab
+.venv/bin/python -m sync_lab capture-calibration \
+  --config configs/hardware_6cam.json \
+  --output data/rig_calibration_001 --settle 0.5 --burst 1.0
+```
+
+Press Enter once per stationary pose and type `q` after the last pose. This
+format is handled by the separate `prepare_segmented_realsense.py` script below;
+it is deliberately not mixed into the legacy HO-Cap preparation script.
+
 Each camera must share tag observations with others in some synchronized groups;
 the observation graph must connect all cameras to the reference. All six need
 not see the marker simultaneously. Only one physical instance of ID 0 may be
@@ -86,6 +100,30 @@ distortion model must still match. The command warns about differences and
 `conversion.json` preserves reference exports, source parameters, and deltas.
 Source captures are never modified. Validate resulting geometry on held-out views;
 small focal-length differences do not guarantee small extrinsic errors.
+
+### Prepare an interactive segmented capture
+
+Use this command only for `sync_lab capture-calibration` output. Every pose in
+`calibration_images/frames.jsonl` is included; there is no middle-frame or
+`--frames-per-session` selection because sync-lab already selected one valid
+synchronized color group per pose.
+
+```bash
+cd /home/user/multical
+taskset -c 0-7 python tools/prepare_segmented_realsense.py \
+  /home/user/realsense-sync-lab/data/rig_calibration_001 \
+  --output ./aruco_inputs
+```
+
+The input may also be the `calibration_images` directory itself or a parent
+whose immediate children contain segmented captures. Old HO-Cap sessions are
+ignored by this new script; `prepare_realsense.py` remains the independent
+legacy converter. PNG images remain lossless PNG symlinks in the prepared data.
+
+A single interactive capture contains one device-intrinsics snapshot, so use
+the default `--intrinsics-policy strict`. Only add `--intrinsics-policy first`
+when combining multiple independent segmented captures whose numerical device
+intrinsics differ slightly and that approximation is explicitly acceptable.
 
 Output:
 
